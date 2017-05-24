@@ -83,6 +83,10 @@
   ([all-things]
   (map (fn [n] (apply compete-with-everything-else (nth all-things) all-things)) (range (count all-things)))))
 
+(defn select-individuals
+  []
+  )
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
