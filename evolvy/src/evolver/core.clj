@@ -53,6 +53,36 @@
             (def result (compete {:left l :right r}))
             (recur (:left result) (:right result)))))
 
+;; make one poor thing compete with everything else
+;; in order to test its ability to survive
+;; returns a map containing the :thing which is the thing
+;; :wins which is the nubmer of wins
+;; :losses which is the number of losses
+(defn compete-with-everything-else
+  [poor-thing & everything-else]
+  (loop [opponents everything-else wins 0 losses 0]
+        (if (empty? opponents)
+          {:thing poor-thing :wins wins :losses losses}
+          (do
+            (def result (compete-to-death {:left poor-thing :right (first opponents)}))
+            (def poor-thing-won (= poor-thing (:victor result)))
+            (recur
+              (rest opponents)
+              (or
+                (and poor-thing-won (+ wins 1))
+                wins)
+              (or
+                (and (not poor-thing-won) (+ losses 1))
+                losses))))))
+
+;; hold the grand tournament of competing things
+;; returns a sequence of victors
+(defn grand-tournament
+  ([n max-attack max-speed max-defense max-health]
+   (grand-tournament (make-population n max-attack max-speed max-defense max-health)))
+  ([all-things]
+  (map (fn [n] (apply compete-with-everything-else (nth all-things) all-things)) (range (count all-things)))))
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
